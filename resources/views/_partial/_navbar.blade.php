@@ -5,6 +5,7 @@
     <div class="flex-1">
         @auth
             <ul class="menu menu-horizontal px-1">
+                <li><a href="/post">Post</a></li>
                 <li><a href="/asset">Asset</a></li>
                 <li><a href="/location">Location</a></li>
                 <li><a href="/category">Category</a></li>

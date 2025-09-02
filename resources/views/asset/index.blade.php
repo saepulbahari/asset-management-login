@@ -95,6 +95,5 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
     {{ $assets->links() }}
 @endsection

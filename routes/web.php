@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LocationController;
@@ -12,12 +14,7 @@ use Illuminate\Support\Facades\Route;
 // path = string (/, /about, /contact)
 // handler = Closure (callback), Class, [Controller::class, 'method']
 
-Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect('/asset');
-    }
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'home']);
 
 Route::get('/home', function () {
     return redirect('/asset');
@@ -28,19 +25,20 @@ Route::get('/home', function () {
 // Route::resource('category', CategoryController::class);
 
 Route::middleware('auth')->group(function () {
-    Route::resources([
-        'asset' => AssetController::class,
-        'location' => LocationController::class,
-        'category' => CategoryController::class
-    ]);
+
+    Route::middleware('is_admin')->group(function () {
+        Route::resources([
+            'asset' => AssetController::class,
+            'location' => LocationController::class,
+            'category' => CategoryController::class,
+        ]);
+    });
+
+    Route::middleware('role:admin,editor')->group(function () {
+        Route::resource('post', PostController::class);
+    });
 
     Route::delete('asset/{asset}/force', [AssetController::class, 'forceDestroy'])->withTrashed();
     Route::post('asset/{asset}/restore', [AssetController::class, 'restore'])->withTrashed();
 });
 
-Route::get('test', function () {
-    // return 'Test route';
-    // return ['message' => 'Test route'];
-    // return response()->json(['message' => 'Test route']);
-    return Asset::all();
-});
